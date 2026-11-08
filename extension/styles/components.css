@@ -1,0 +1,133 @@
+/* Shared component styles for extension pages (popup + options). */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--kvf-font-family);
+  font-size: var(--kvf-text-base);
+  line-height: var(--kvf-leading-normal);
+  color: var(--kvf-color-text);
+  background: var(--kvf-color-surface);
+  -webkit-font-smoothing: antialiased;
+}
+
+.kvf-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--kvf-space-2);
+  font-weight: var(--kvf-font-semibold);
+  font-size: var(--kvf-text-base);
+}
+
+.kvf-brand img {
+  width: 20px;
+  height: 20px;
+}
+
+.kvf-label {
+  display: block;
+  margin-bottom: var(--kvf-space-1);
+  font-size: var(--kvf-text-sm);
+  font-weight: var(--kvf-font-medium);
+  color: var(--kvf-color-text-muted);
+}
+
+.kvf-select {
+  width: 100%;
+  height: 36px;
+  padding: 0 var(--kvf-space-3);
+  font: inherit;
+  font-size: var(--kvf-text-md);
+  color: var(--kvf-color-text);
+  background: var(--kvf-color-surface);
+  border: var(--kvf-border-width) solid var(--kvf-color-border-strong);
+  border-radius: var(--kvf-radius-md);
+  cursor: pointer;
+}
+
+.kvf-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--kvf-space-2);
+  height: 36px;
+  padding: 0 var(--kvf-space-4);
+  font: inherit;
+  font-size: var(--kvf-text-md);
+  font-weight: var(--kvf-font-medium);
+  border-radius: var(--kvf-radius-md);
+  border: var(--kvf-border-width) solid transparent;
+  cursor: pointer;
+  transition:
+    background-color var(--kvf-transition),
+    border-color var(--kvf-transition);
+}
+
+.kvf-button--primary {
+  color: #ffffff;
+  background: var(--kvf-color-accent);
+}
+
+.kvf-button--primary:hover:not(:disabled) {
+  background: var(--kvf-color-accent-hover);
+}
+
+.kvf-button--secondary {
+  color: var(--kvf-color-text);
+  background: var(--kvf-color-surface);
+  border-color: var(--kvf-color-border-strong);
+}
+
+.kvf-button--secondary:hover:not(:disabled) {
+  background: var(--kvf-color-surface-muted);
+}
+
+.kvf-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.kvf-link {
+  color: var(--kvf-color-accent);
+  font-size: var(--kvf-text-sm);
+  font-weight: var(--kvf-font-medium);
+  text-decoration: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.kvf-link:hover {
+  text-decoration: underline;
+}
+
+.kvf-select:focus-visible,
+.kvf-button:focus-visible,
+.kvf-link:focus-visible,
+.kvf-checkbox:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--kvf-color-focus);
+}
+
+.kvf-skeleton {
+  display: inline-block;
+  border-radius: var(--kvf-radius-sm);
+  background: var(--kvf-color-skeleton);
+}
+
+.kvf-muted {
+  color: var(--kvf-color-text-muted);
+}
+
+.kvf-error {
+  color: var(--kvf-color-danger);
+}
+
+[hidden] {
+  display: none !important;
+}

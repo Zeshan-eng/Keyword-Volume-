@@ -1,0 +1,73 @@
+/*
+ * Keyword Volume Finder design tokens.
+ * Shared by the popup, options page and the SERP card (Shadow DOM, hence :host).
+ */
+:root,
+:host {
+  /* Typography */
+  --kvf-font-family:
+    'KVF Inter', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --kvf-font-regular: 400;
+  --kvf-font-medium: 500;
+  --kvf-font-semibold: 600;
+  --kvf-font-bold: 700;
+  --kvf-text-xs: 11px;
+  --kvf-text-sm: 12px;
+  --kvf-text-md: 13px;
+  --kvf-text-base: 14px;
+  --kvf-text-lg: 16px;
+  --kvf-text-display: 28px;
+  --kvf-leading-tight: 1.2;
+  --kvf-leading-normal: 1.45;
+
+  /* Colours */
+  --kvf-color-surface: #ffffff;
+  --kvf-color-surface-muted: #f9fafb;
+  --kvf-color-border: #e5e7eb;
+  --kvf-color-border-strong: #d1d5db;
+  --kvf-color-text: #111827;
+  --kvf-color-text-muted: #6b7280;
+  --kvf-color-text-subtle: #9ca3af;
+  --kvf-color-accent: #2563eb;
+  --kvf-color-accent-hover: #1d4ed8;
+  --kvf-color-accent-soft: #eff6ff;
+  --kvf-color-danger: #b91c1c;
+  --kvf-color-danger-soft: #fef2f2;
+  --kvf-color-skeleton: #f3f4f6;
+  --kvf-color-focus: rgba(37, 99, 235, 0.35);
+
+  /* Spacing (4px scale) */
+  --kvf-space-1: 4px;
+  --kvf-space-2: 8px;
+  --kvf-space-3: 12px;
+  --kvf-space-4: 16px;
+  --kvf-space-5: 20px;
+  --kvf-space-6: 24px;
+
+  /* Borders & radii */
+  --kvf-border-width: 1px;
+  --kvf-radius-sm: 6px;
+  --kvf-radius-md: 8px;
+  --kvf-radius-lg: 12px;
+
+  /* Elevation & motion */
+  --kvf-shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.05);
+  --kvf-transition: 120ms ease;
+}
+
+/* Dark palette — applied to the SERP card when Google renders in dark mode. */
+:host([data-theme='dark']) {
+  --kvf-color-surface: #1f2023;
+  --kvf-color-surface-muted: #28292d;
+  --kvf-color-border: #3c4043;
+  --kvf-color-border-strong: #5f6368;
+  --kvf-color-text: #e8eaed;
+  --kvf-color-text-muted: #9aa0a6;
+  --kvf-color-text-subtle: #80868b;
+  --kvf-color-accent: #8ab4f8;
+  --kvf-color-accent-hover: #aecbfa;
+  --kvf-color-accent-soft: rgba(138, 180, 248, 0.12);
+  --kvf-color-danger: #f28b82;
+  --kvf-color-danger-soft: rgba(242, 139, 130, 0.12);
+  --kvf-color-skeleton: #303134;
+}

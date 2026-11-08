@@ -36,7 +36,7 @@ export default [
     },
   },
   {
-    files: ['backend/**/*.js', 'extension/tests/**/*.js', 'eslint.config.js'],
+    files: ['backend/**/*.js', 'extension/tests/**/*.js', 'scripts/**/*.js', 'eslint.config.js'],
     languageOptions: { globals: { ...globals.node } },
   },
 ];

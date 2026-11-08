@@ -1,0 +1,75 @@
+{
+  "manifest_version": 3,
+  "name": "Keyword Volume Finder",
+  "version": "1.0.0",
+  "description": "See estimated monthly search volume for your Google searches, right on the results page.",
+  "minimum_chrome_version": "116",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "Keyword Volume Finder",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://www.google.com/search*",
+    "https://www.google.co.uk/search*",
+    "https://www.google.ae/search*",
+    "https://www.google.com.pk/search*",
+    "https://www.google.ca/search*",
+    "https://www.google.com.au/search*",
+    "https://www.google.co.in/search*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.google.com/search*",
+        "https://www.google.co.uk/search*",
+        "https://www.google.ae/search*",
+        "https://www.google.com.pk/search*",
+        "https://www.google.ca/search*",
+        "https://www.google.com.au/search*",
+        "https://www.google.co.in/search*"
+      ],
+      "js": ["content/content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "content/main.js",
+        "content/serp-card.js",
+        "content/card.css",
+        "shared/*.js",
+        "styles/tokens.css",
+        "fonts/*.woff2"
+      ],
+      "matches": [
+        "https://www.google.com/*",
+        "https://www.google.co.uk/*",
+        "https://www.google.ae/*",
+        "https://www.google.com.pk/*",
+        "https://www.google.ca/*",
+        "https://www.google.com.au/*",
+        "https://www.google.co.in/*"
+      ]
+    }
+  ]
+}
