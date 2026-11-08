@@ -1,0 +1,115 @@
+body {
+  width: 360px;
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kvf-space-4);
+  padding: var(--kvf-space-4);
+}
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel {
+  min-height: 132px;
+  padding: var(--kvf-space-4);
+  border: var(--kvf-border-width) solid var(--kvf-color-border);
+  border-radius: var(--kvf-radius-lg);
+  background: var(--kvf-color-surface);
+}
+
+.empty-title {
+  margin: 0 0 var(--kvf-space-1);
+  font-weight: var(--kvf-font-semibold);
+}
+
+.empty p:last-child {
+  margin: 0;
+  font-size: var(--kvf-text-md);
+}
+
+.keyword {
+  margin: 0;
+  font-size: var(--kvf-text-md);
+  overflow-wrap: anywhere;
+}
+
+#keyword {
+  font-weight: var(--kvf-font-medium);
+}
+
+.volume {
+  min-height: 38px;
+  margin: var(--kvf-space-2) 0 0;
+  font-size: var(--kvf-text-display);
+  font-weight: var(--kvf-font-bold);
+  line-height: var(--kvf-leading-tight);
+  letter-spacing: -0.01em;
+  color: var(--kvf-color-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.volume[data-state='loading'] {
+  width: 110px;
+  border-radius: var(--kvf-radius-sm);
+  background: var(--kvf-color-skeleton);
+}
+
+.volume[data-state='unavailable'] {
+  min-height: 0;
+  font-size: var(--kvf-text-lg);
+  font-weight: var(--kvf-font-semibold);
+  color: var(--kvf-color-text);
+}
+
+.volume-caption,
+.message {
+  margin: var(--kvf-space-1) 0 0;
+  font-size: var(--kvf-text-sm);
+  color: var(--kvf-color-text-muted);
+}
+
+.meta {
+  display: grid;
+  gap: var(--kvf-space-1);
+  margin: var(--kvf-space-3) 0 0;
+  padding-top: var(--kvf-space-3);
+  border-top: var(--kvf-border-width) solid var(--kvf-color-border);
+  font-size: var(--kvf-text-sm);
+}
+
+.meta div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--kvf-space-2);
+}
+
+.meta dt {
+  color: var(--kvf-color-text-subtle);
+}
+
+.meta dd {
+  margin: 0;
+  font-weight: var(--kvf-font-medium);
+  color: var(--kvf-color-text-muted);
+}
+
+.controls {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--kvf-space-2);
+}
+
+.control-country {
+  flex: 1;
+}
+
+.footer {
+  font-size: var(--kvf-text-xs);
+  line-height: var(--kvf-leading-normal);
+}

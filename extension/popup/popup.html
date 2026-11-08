@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Keyword Volume Finder</title>
+    <link rel="stylesheet" href="../styles/fonts.css" />
+    <link rel="stylesheet" href="../styles/tokens.css" />
+    <link rel="stylesheet" href="../styles/components.css" />
+    <link rel="stylesheet" href="popup.css" />
+    <script type="module" src="popup.js"></script>
+  </head>
+  <body>
+    <main class="popup">
+      <header class="popup-header">
+        <div class="kvf-brand">
+          <img src="../icons/icon-32.png" alt="" />
+          <span>Keyword Volume Finder</span>
+        </div>
+        <button type="button" class="kvf-link" id="open-settings">Settings</button>
+      </header>
+
+      <section class="panel" aria-live="polite">
+        <!-- Shown when the active tab is not a Google results page. -->
+        <div id="view-idle" class="empty" hidden>
+          <p class="empty-title">No Google search in this tab</p>
+          <p class="kvf-muted">
+            Search on Google and the estimated monthly search volume will appear here and above the
+            results.
+          </p>
+        </div>
+
+        <!-- Shown when the page needs a reload (e.g. right after installing). -->
+        <div id="view-reload" class="empty" hidden>
+          <p class="empty-title">Reload the page</p>
+          <p class="kvf-muted">Reload this Google results page to load its search volume.</p>
+        </div>
+
+        <div id="view-result" hidden>
+          <p class="keyword"><span class="kvf-muted">Keyword:</span> <span id="keyword"></span></p>
+          <p class="volume" id="volume"></p>
+          <p class="volume-caption" id="volume-caption">Estimated monthly searches</p>
+          <p class="message kvf-muted" id="message" hidden></p>
+          <dl class="meta">
+            <div id="meta-source">
+              <dt>Data source</dt>
+              <dd id="source"></dd>
+            </div>
+            <div id="meta-updated">
+              <dt>Last updated</dt>
+              <dd id="updated"></dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <div class="controls">
+        <div class="control-country">
+          <label class="kvf-label" for="country">Country</label>
+          <select class="kvf-select" id="country"></select>
+        </div>
+        <button type="button" class="kvf-button kvf-button--primary" id="refresh" disabled>
+          Refresh
+        </button>
+      </div>
+
+      <footer class="footer kvf-muted">
+        Volumes are estimates from DataForSEO (Google Ads data), not exact search counts.
+      </footer>
+    </main>
+  </body>
+</html>
