@@ -59,7 +59,8 @@
         "content/card.css",
         "shared/*.js",
         "styles/tokens.css",
-        "fonts/*.woff2"
+        "fonts/*.woff2",
+        "icons/icon-32.png"
       ],
       "matches": [
         "https://www.google.com/*",
