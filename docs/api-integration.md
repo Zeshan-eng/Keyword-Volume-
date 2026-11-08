@@ -40,10 +40,10 @@ Defined in [backend/src/countries.js](../backend/src/countries.js):
 | IN      | 2356                     | en              |
 | GLOBAL  | (omitted, Ads Live only) | (omitted)       |
 
-**Pending verification:** confirm each location and language pair is supported by Labs using
-`GET /v3/dataforseo_labs/locations_and_languages`. Credentials are required. If, for example, a
-location only supports another language in Labs, adjust `languageCode`. If Labs does not support
-the location at all, the provider returns an error (status 40501 maps to `invalid_keyword`).
+**Verified live on 8 November 2026:** a lookup for "plumber" returned data from Labs for all seven
+countries with these codes (US, GB, AE, PK, CA, AU, IN), so the location and language pairs above
+work. The full `locations_and_languages` list was not cross-checked. If Labs ever does not
+support a location, the provider returns an error (status 40501 maps to `invalid_keyword`).
 
 ## Status-code mapping
 
@@ -80,15 +80,19 @@ volumes.
 
 ## Live verification checklist
 
-Not yet done, because no credentials were available during development:
+Run on 8 November 2026 against the live API (backend started with real credentials):
 
-- [ ] Start the backend with real credentials. `curl` one keyword per country with an extension
-      `Origin` header. Confirm `success: true` and plausible volumes.
-- [ ] Look up a nonsense keyword. Confirm Labs returns no item, Ads is called and the final answer
-      is `no_data`. Record the actual Labs "not found" response shape here (`items: null` and
-      `items: []` are both handled).
-- [ ] Look up `GLOBAL`. Confirm only Ads Live is called.
-- [ ] Run `locations_and_languages` and confirm the country mapping table.
-- [ ] Check the per-request `cost` in responses against the estimates above.
+- [x] `curl` one keyword ("plumber") per country with an extension `Origin` header. All 8 returned
+      `success: true` with plausible volumes (US 673,000; GB 60,500; AE 5,400; PK 12,100; CA 60,500;
+      AU 40,500; IN 110,000; GLOBAL 1,220,000).
+- [x] Nonsense keyword ("zzqxv blorptang wumbo", US) returned `no_data`, shown as "Data unavailable".
+- [x] `GLOBAL` was answered by Google Ads Live ("DataForSEO Google Ads"); the other seven by Labs.
+- [x] A repeated US lookup returned `cached: true` with no second provider call.
+- [x] The country mapping table is confirmed by the results above.
+- [ ] Not yet seen: a real keyword that Labs lacks but Google Ads Live has (fallback on a non-global
+      location). Covered by fixture tests only. Also record the raw Labs "not found" shape.
+- [ ] Check the per-request `cost` in responses against the estimates above (check the DataForSEO
+      dashboard usage page).
 - [ ] Load the extension in Chrome on real google.com and google.co.uk, and confirm the card's
-      placement and dark-theme rendering.
+      placement and dark-theme rendering. Automated browsers are blocked by Google's CAPTCHA, so
+      this needs a manual check.

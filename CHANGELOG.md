@@ -24,7 +24,10 @@ All notable changes to this project are documented here. The format follows
   adapters, configuration and HTTP behaviour.
 - Documentation: architecture, API integration, security, release checklist.
 
+### Verified
+
+- Live DataForSEO lookups for all supported countries, "no data" handling and caching.
+
 ### Pending
 
-- Live verification against the DataForSEO API (requires credentials).
 - Manual verification of card placement on live Google Search.

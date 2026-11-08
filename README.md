@@ -79,7 +79,6 @@ Settings page.
 - The extension was checked end to end in Chromium against a test-only stub backend on a page
   shaped like Google's results. Live Google blocks automated browsers, so the card's placement
   on the real Google page still needs a manual check.
-- **Live DataForSEO verification is pending credentials.** The adapters were built from the
-  documented response formats and tested against fixtures. With placeholder credentials, the real
-  API's auth error was handled correctly. See
+- **Live DataForSEO lookups verified** (8 November 2026) for all 8 countries, including the "no
+  data" case and caching. Details and remaining open items are in
   [docs/api-integration.md](docs/api-integration.md#live-verification-checklist).
