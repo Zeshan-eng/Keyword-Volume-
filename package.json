@@ -1,0 +1,29 @@
+{
+  "name": "keyword-volume-finder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chrome extension that shows provider-sourced keyword search volume on Google SERPs.",
+  "type": "module",
+  "workspaces": [
+    "backend"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test \"extension/tests/**/*.test.js\" \"backend/tests/**/*.test.js\"",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run lint && npm run format:check && npm test"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.14.0",
+    "globals": "17.14.0",
+    "prettier": "3.9.10"
+  },
+  "overrides": {
+    "minimatch": "11.0.5"
+  }
+}

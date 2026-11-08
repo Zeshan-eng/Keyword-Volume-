@@ -1,0 +1,20 @@
+{
+  "name": "keyword-volume-finder-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Backend proxy for Keyword Volume Finder: validates requests, calls DataForSEO, caches and normalizes results.",
+  "type": "module",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node --env-file=.env src/server.js",
+    "dev": "node --watch --env-file=.env src/server.js",
+    "test": "node --test \"tests/**/*.test.js\""
+  },
+  "dependencies": {
+    "express": "5.3.0",
+    "express-rate-limit": "8.7.3"
+  }
+}
