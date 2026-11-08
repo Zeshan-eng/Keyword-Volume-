@@ -1,0 +1,28 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "11081200-0000-0000-0000-000000000004",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "result_count": 1,
+      "result": [
+        {
+          "keyword": "fixture keyword",
+          "spell": null,
+          "location_code": null,
+          "language_code": null,
+          "search_partners": false,
+          "competition": null,
+          "competition_index": null,
+          "search_volume": null,
+          "monthly_searches": null
+        }
+      ]
+    }
+  ]
+}

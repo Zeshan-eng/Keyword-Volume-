@@ -1,0 +1,54 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "time": "0.2 sec.",
+  "cost": 0.0101,
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "11081200-0000-0000-0000-000000000001",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "time": "0.1 sec.",
+      "cost": 0.0101,
+      "result_count": 1,
+      "path": ["v3", "dataforseo_labs", "google", "keyword_overview", "live"],
+      "data": {
+        "api": "dataforseo_labs",
+        "function": "keyword_overview",
+        "se_type": "google",
+        "language_code": "en",
+        "location_code": 2840,
+        "keywords": ["fixture keyword"]
+      },
+      "result": [
+        {
+          "se_type": "google",
+          "location_code": 2840,
+          "language_code": "en",
+          "items_count": 1,
+          "items": [
+            {
+              "se_type": "google",
+              "keyword": "fixture keyword",
+              "location_code": 2840,
+              "language_code": "en",
+              "search_partners": false,
+              "keyword_info": {
+                "se_type": "google",
+                "last_updated_time": "2026-10-14 06:12:40 +00:00",
+                "competition": 0.5,
+                "competition_level": "MEDIUM",
+                "cpc": 1.0,
+                "search_volume": 4400,
+                "monthly_searches": [{ "year": 2026, "month": 9, "search_volume": 4400 }]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
