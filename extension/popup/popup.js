@@ -9,7 +9,7 @@ import {
   formatVolume,
   UNAVAILABLE_LABEL,
 } from '../shared/format.js';
-import { MESSAGE_TYPES, tabStateKey } from '../shared/messages.js';
+import { MESSAGE_TYPES, relatedStateKey, tabStateKey } from '../shared/messages.js';
 import { extractQueryFromUrl } from '../shared/query.js';
 import { getSettings, onSettingsChanged, updateSettings } from '../shared/settings.js';
 
@@ -51,6 +51,13 @@ function renderState(state) {
   $('message').textContent = describeUnavailable(state.reason);
 }
 
+function renderRelatedCount(state) {
+  const value = $('related-count');
+  if (!state || state.status === 'loading') value.textContent = '…';
+  else if (state.status === 'success') value.textContent = String(state.keywords.length);
+  else value.textContent = 'Unavailable';
+}
+
 async function getActiveTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   return tab;
@@ -76,12 +83,19 @@ async function init() {
   }
 
   const stateKey = tabStateKey(tab.id);
-  const { [stateKey]: state } = await chrome.storage.session.get(stateKey);
+  const relatedKey = relatedStateKey(tab.id);
+  const { [stateKey]: state, [relatedKey]: relatedState } = await chrome.storage.session.get([
+    stateKey,
+    relatedKey,
+  ]);
+  renderRelatedCount(relatedState);
   if (state) renderState(state);
   else showView('reload');
 
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === 'session' && changes[stateKey]?.newValue) renderState(changes[stateKey].newValue);
+    if (area !== 'session') return;
+    if (changes[stateKey]?.newValue) renderState(changes[stateKey].newValue);
+    if (changes[relatedKey]?.newValue) renderRelatedCount(changes[relatedKey].newValue);
   });
 
   $('refresh').addEventListener('click', async () => {

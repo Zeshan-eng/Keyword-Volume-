@@ -66,6 +66,10 @@ h2 {
   border-radius: 4px;
 }
 
+.toggle + .toggle {
+  margin-top: var(--kvf-space-4);
+}
+
 .toggle-title {
   display: block;
   font-weight: var(--kvf-font-medium);

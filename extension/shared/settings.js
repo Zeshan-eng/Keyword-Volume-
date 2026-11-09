@@ -4,6 +4,7 @@ import { DEFAULT_COUNTRY, isSupportedCountry } from './countries.js';
 export const SETTINGS_DEFAULTS = Object.freeze({
   country: DEFAULT_COUNTRY,
   showSerpCard: true,
+  showDomainAge: true,
 });
 
 export function sanitizeSettings(raw) {
@@ -12,6 +13,10 @@ export function sanitizeSettings(raw) {
     country: isSupportedCountry(value.country) ? value.country : SETTINGS_DEFAULTS.country,
     showSerpCard:
       typeof value.showSerpCard === 'boolean' ? value.showSerpCard : SETTINGS_DEFAULTS.showSerpCard,
+    showDomainAge:
+      typeof value.showDomainAge === 'boolean'
+        ? value.showDomainAge
+        : SETTINGS_DEFAULTS.showDomainAge,
   };
 }
 

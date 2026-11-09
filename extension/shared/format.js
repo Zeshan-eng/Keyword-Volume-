@@ -30,6 +30,8 @@ const REASON_MESSAGES = {
   [QUERY_REJECTION.UNSUPPORTED_CHARACTERS]:
     'This search contains characters the data provider does not support.',
   [ERROR_CODES.NO_DATA]: 'The data provider has no search volume for this keyword.',
+  [ERROR_CODES.NOT_SUPPORTED]: 'Not available for Global / Worldwide. Choose a country instead.',
+  [ERROR_CODES.INVALID_REQUEST]: 'The request could not be processed.',
   [ERROR_CODES.INVALID_KEYWORD]: 'The data provider could not process this keyword.',
   [ERROR_CODES.INVALID_COUNTRY]: 'The selected country is not supported.',
   [ERROR_CODES.RATE_LIMITED]: 'Too many requests right now. Please try again in a minute.',

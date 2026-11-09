@@ -1,35 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { CACHE_TTL_MS, createVolumeCache } from '../shared/volume-cache.js';
+import { CACHE_PREFIXES, CACHE_TTL_MS, createStorageCache } from '../shared/storage-cache.js';
+import { createClock, createFakeApi, createMemoryStorage, json } from './helpers.js';
 import { fromBackendResponse, isCacheable } from '../shared/volume-result.js';
 import { createVolumeRepository } from '../shared/volume-repository.js';
 import { ERROR_CODES } from '../shared/messages.js';
 
-/** In-memory stand-in for chrome.storage.local. */
-function createMemoryStorage(initial = {}) {
-  const data = { ...initial };
-  return {
-    data,
-    async get(keys) {
-      if (keys === null) return structuredClone(data);
-      const list = Array.isArray(keys) ? keys : [keys];
-      return Object.fromEntries(
-        list.filter((k) => k in data).map((k) => [k, structuredClone(data[k])]),
-      );
-    },
-    async set(items) {
-      Object.assign(data, structuredClone(items));
-    },
-    async remove(keys) {
-      for (const key of Array.isArray(keys) ? keys : [keys]) delete data[key];
-    },
-  };
-}
-
-function createClock(start = 1_000_000) {
-  let current = start;
-  return { now: () => current, advance: (ms) => (current += ms) };
-}
+const createVolumeCache = (options) =>
+  createStorageCache({ prefix: CACHE_PREFIXES.VOLUME, ttlMs: CACHE_TTL_MS, ...options });
 
 const request = { keyword: 'mold removal', country: 'US' };
 const successBody = {
@@ -141,21 +119,11 @@ test('prune and clear only touch cache entries', async () => {
 // --- volume-repository ----------------------------------------------------------
 
 function setupRepository(responder) {
-  const calls = [];
   const storage = createMemoryStorage();
-  const repository = createVolumeRepository({
-    cache: createVolumeCache({ storage }),
-    backendBaseUrl: 'https://kvf.example',
-    timeoutMs: 1000,
-    fetchImpl: async (url, init) => {
-      calls.push({ url: new URL(url), init });
-      return responder(calls.length);
-    },
-  });
+  const { api, calls } = createFakeApi(responder);
+  const repository = createVolumeRepository({ cache: createVolumeCache({ storage }), api });
   return { repository, calls, storage };
 }
-
-const json = (body, status = 200) => new Response(JSON.stringify(body), { status });
 
 test('calls the backend once, then serves from cache', async () => {
   const { repository, calls } = setupRepository(() => json(successBody));

@@ -35,6 +35,13 @@
   --kvf-color-danger-soft: #fef2f2;
   --kvf-color-skeleton: #f3f4f6;
   --kvf-color-focus: rgba(37, 99, 235, 0.35);
+  /* Inline SERP metrics (badges + toolbar) */
+  --kvf-color-badge: #0f766e;
+  --kvf-color-badge-text: #ffffff;
+  --kvf-color-badge-missing: #e5e7eb;
+  --kvf-color-badge-missing-text: #4b5563;
+  --kvf-color-bar: #f3f4f6;
+  --kvf-color-bar-text: #374151;
 
   /* Spacing (4px scale) */
   --kvf-space-1: 4px;
@@ -70,4 +77,10 @@
   --kvf-color-danger: #f28b82;
   --kvf-color-danger-soft: rgba(242, 139, 130, 0.12);
   --kvf-color-skeleton: #303134;
+  --kvf-color-badge: #115e59;
+  --kvf-color-badge-text: #ccfbf1;
+  --kvf-color-badge-missing: #3c4043;
+  --kvf-color-badge-missing-text: #bdc1c6;
+  --kvf-color-bar: #303134;
+  --kvf-color-bar-text: #bdc1c6;
 }

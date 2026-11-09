@@ -54,9 +54,8 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "content/main.js",
-        "content/serp-card.js",
-        "content/card.css",
+        "content/*.js",
+        "content/*.css",
         "shared/*.js",
         "styles/tokens.css",
         "fonts/*.woff2",

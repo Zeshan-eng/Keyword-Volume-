@@ -1,12 +1,16 @@
 /** Message types exchanged between content script, popup and service worker. */
 export const MESSAGE_TYPES = Object.freeze({
   GET_VOLUME: 'kvf:get-volume',
+  GET_RELATED: 'kvf:get-related',
+  GET_DOMAIN_AGES: 'kvf:get-domain-ages',
   REFRESH_CURRENT: 'kvf:refresh-current',
 });
 
 /** Error codes shared with the backend's response contract. */
 export const ERROR_CODES = Object.freeze({
   NO_DATA: 'no_data',
+  NOT_SUPPORTED: 'not_supported',
+  INVALID_REQUEST: 'invalid_request',
   INVALID_KEYWORD: 'invalid_keyword',
   INVALID_COUNTRY: 'invalid_country',
   RATE_LIMITED: 'rate_limited',
@@ -16,7 +20,12 @@ export const ERROR_CODES = Object.freeze({
 });
 
 export const TAB_STATE_PREFIX = 'tab:';
+export const TAB_RELATED_PREFIX = 'tabrel:';
 
 export function tabStateKey(tabId) {
   return `${TAB_STATE_PREFIX}${tabId}`;
+}
+
+export function relatedStateKey(tabId) {
+  return `${TAB_RELATED_PREFIX}${tabId}`;
 }

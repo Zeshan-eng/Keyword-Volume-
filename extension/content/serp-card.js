@@ -1,7 +1,7 @@
 /**
- * The compact search-volume card shown above Google's results.
- * Rendered inside a closed Shadow DOM so Google's styles and ours never collide,
- * and built exclusively with DOM APIs + textContent (no HTML string parsing).
+ * The compact keyword card shown above Google's results: search volume plus the
+ * related-keywords section. Rendered inside a closed Shadow DOM so Google's styles and
+ * ours never collide, and built exclusively with DOM APIs + textContent.
  */
 import {
   formatDate,
@@ -10,10 +10,12 @@ import {
   UNAVAILABLE_LABEL,
 } from '../shared/format.js';
 import { getCountryName } from '../shared/countries.js';
+import { attachStylesheets, detectPageTheme, el, icon, ICONS, infoTip } from './dom.js';
+import { createRelatedPanel } from './related-panel.js';
 
 const HOST_ID = 'kvf-serp-card-host';
 const STYLESHEETS = ['styles/tokens.css', 'content/card.css'];
-const SVG_NS = 'http://www.w3.org/2000/svg';
+const VOLUME_TIP = 'Search volume: estimated number of searches per month (provider estimate).';
 
 export const CARD_STATE = Object.freeze({
   LOADING: 'loading',
@@ -21,43 +23,11 @@ export const CARD_STATE = Object.freeze({
   UNAVAILABLE: 'unavailable',
 });
 
-function el(tag, className, text) {
-  const node = document.createElement(tag);
-  if (className) node.className = className;
-  if (text !== undefined) node.textContent = text;
-  return node;
-}
-
-function createRefreshIcon() {
-  const svg = document.createElementNS(SVG_NS, 'svg');
-  svg.setAttribute('viewBox', '0 0 24 24');
-  svg.setAttribute('width', '16');
-  svg.setAttribute('height', '16');
-  svg.setAttribute('aria-hidden', 'true');
-  const path = document.createElementNS(SVG_NS, 'path');
-  path.setAttribute('fill', 'currentColor');
-  path.setAttribute(
-    'd',
-    'M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.75 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z',
-  );
-  svg.append(path);
-  return svg;
-}
-
 function createMetaItem(label) {
   const item = el('div', 'meta-item');
   const value = el('dd', 'meta-value');
   item.append(el('dt', 'meta-label', label), value);
   return { item, value };
-}
-
-/** Google can render in a dark theme independent of the OS preference. */
-function detectPageTheme() {
-  const match = getComputedStyle(document.body).backgroundColor.match(/\d+(\.\d+)?/g);
-  if (!match || match.length < 3) return 'light';
-  const [r, g, b] = match.map(Number);
-  const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
-  return luminance < 0.5 ? 'dark' : 'light';
 }
 
 function findMountTarget() {
@@ -74,19 +44,9 @@ export function createSerpCard({ onRefresh }) {
   host.style.cssText = 'display:block;max-width:652px;margin:0 0 20px;visibility:hidden;';
   const shadow = host.attachShadow({ mode: 'closed' });
 
-  let pendingStyles = STYLESHEETS.length;
-  for (const path of STYLESHEETS) {
-    const link = el('link');
-    link.rel = 'stylesheet';
-    link.href = chrome.runtime.getURL(path);
-    const reveal = () => {
-      pendingStyles -= 1;
-      if (pendingStyles === 0) host.style.visibility = 'visible';
-    };
-    link.addEventListener('load', reveal, { once: true });
-    link.addEventListener('error', reveal, { once: true });
-    shadow.append(link);
-  }
+  attachStylesheets(shadow, STYLESHEETS).then(() => {
+    host.style.visibility = 'visible';
+  });
 
   const card = el('section', 'card');
   card.setAttribute('aria-label', 'Keyword Volume Finder');
@@ -99,9 +59,9 @@ export function createSerpCard({ onRefresh }) {
   brand.append(logo, el('span', null, 'Keyword Volume Finder'));
   const refreshButton = el('button', 'refresh');
   refreshButton.type = 'button';
-  refreshButton.title = 'Refresh search volume';
-  refreshButton.setAttribute('aria-label', 'Refresh search volume');
-  refreshButton.append(createRefreshIcon());
+  refreshButton.title = 'Refresh keyword data';
+  refreshButton.setAttribute('aria-label', 'Refresh keyword data');
+  refreshButton.append(icon(ICONS.refresh));
   refreshButton.addEventListener('click', () => onRefresh());
   header.append(brand, refreshButton);
 
@@ -112,7 +72,7 @@ export function createSerpCard({ onRefresh }) {
   const volumeRow = el('div', 'volume-row');
   const volumeValue = el('span', 'volume');
   const volumeCaption = el('span', 'volume-caption', 'Estimated monthly searches');
-  volumeRow.append(volumeValue, volumeCaption);
+  volumeRow.append(volumeValue, volumeCaption, infoTip(VOLUME_TIP));
 
   const message = el('p', 'message');
   message.setAttribute('role', 'status');
@@ -123,7 +83,9 @@ export function createSerpCard({ onRefresh }) {
   const updated = createMetaItem('Last updated');
   meta.append(country.item, source.item, updated.item);
 
-  card.append(header, keywordRow, volumeRow, message, meta);
+  const related = createRelatedPanel();
+
+  card.append(header, keywordRow, volumeRow, message, meta, related.element);
   shadow.append(card);
 
   function setMeta({ countryCode, dataSource, lastUpdated }) {
@@ -176,6 +138,8 @@ export function createSerpCard({ onRefresh }) {
 
   return {
     render,
+    renderRelated: (state) => related.render(state),
+    resetRelated: () => related.reset(),
     mount,
     unmount: () => host.remove(),
     isMounted: () => host.isConnected,

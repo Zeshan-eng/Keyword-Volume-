@@ -30,10 +30,14 @@ test('has a human message for every error code', () => {
 
 test('sanitizes stored settings', () => {
   assert.deepEqual(sanitizeSettings(undefined), SETTINGS_DEFAULTS);
-  assert.deepEqual(sanitizeSettings({ country: 'XX', showSerpCard: 'yes' }), SETTINGS_DEFAULTS);
-  assert.deepEqual(sanitizeSettings({ country: 'GB', showSerpCard: false }), {
+  assert.deepEqual(
+    sanitizeSettings({ country: 'XX', showSerpCard: 'yes', showDomainAge: 1 }),
+    SETTINGS_DEFAULTS,
+  );
+  assert.deepEqual(sanitizeSettings({ country: 'GB', showSerpCard: false, showDomainAge: false }), {
     country: 'GB',
     showSerpCard: false,
+    showDomainAge: false,
   });
 });
 
