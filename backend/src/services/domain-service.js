@@ -93,6 +93,11 @@ export function createDomainService({
       ]),
     );
 
+    logger.info('domains_lookup', {
+      hostnames: hostnames.length,
+      domains: uniqueDomains.length,
+      available: [...ages.values()].filter((age) => age.result.status === 'available').length,
+    });
     const current = now();
     return {
       success: true,
