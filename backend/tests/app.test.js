@@ -19,6 +19,27 @@ const fakeVolumeService = {
   },
 };
 
+const fakeRelatedService = {
+  async getRelated(args) {
+    calls.push(args);
+    if (args.keyword === 'related-boom') {
+      throw new ProviderError(ERROR_CODES.RATE_LIMITED, 'limit');
+    }
+    return {
+      success: true,
+      keyword: args.keyword,
+      related_keywords: [{ keyword: 'x', search_volume: 1 }],
+    };
+  },
+};
+const domainCalls = [];
+const fakeDomainService = {
+  async getDomainMetrics(hostnames) {
+    domainCalls.push(hostnames);
+    return { success: true, domains: hostnames.map((hostname) => ({ hostname })) };
+  },
+};
+
 let server;
 let baseUrl;
 
@@ -28,9 +49,15 @@ before(async () => {
     DATAFORSEO_PASSWORD: 'p',
     NODE_ENV: 'production',
     ALLOWED_EXTENSION_IDS: 'abcdefghijklmnopabcdefghijklmnop',
-    RATE_LIMIT_PER_MINUTE: '20',
+    RATE_LIMIT_PER_MINUTE: '40',
   });
-  const app = createApp({ config, volumeService: fakeVolumeService, logger: silentLogger });
+  const app = createApp({
+    config,
+    volumeService: fakeVolumeService,
+    relatedService: fakeRelatedService,
+    domainService: fakeDomainService,
+    logger: silentLogger,
+  });
   await new Promise((resolve) => {
     server = app.listen(0, '127.0.0.1', resolve);
   });
@@ -125,17 +152,46 @@ test('hides unexpected errors behind a generic 500', async () => {
   assert.ok(!(await res.text()).includes('hunter2'));
 });
 
+test('related keywords route validates and maps provider errors', async () => {
+  const ok = await get('/api/v1/related?keyword=roofer&country=US');
+  assert.equal(ok.status, 200);
+  assert.equal((await ok.json()).related_keywords.length, 1);
+
+  const bad = await get('/api/v1/related?keyword=site%3Ax.com&country=US');
+  assert.equal(bad.status, 400);
+  assert.deepEqual((await bad.json()).related_keywords, []);
+
+  const limited = await get('/api/v1/related?keyword=related-boom&country=US');
+  assert.equal(limited.status, 429);
+  const body = await limited.json();
+  assert.equal(body.error_code, ERROR_CODES.RATE_LIMITED);
+  assert.deepEqual(body.related_keywords, []);
+});
+
+test('domains route validates hostnames and requires an allowed origin', async () => {
+  const ok = await get('/api/v1/domains?hosts=www.example.com,example.org');
+  assert.equal(ok.status, 200);
+  assert.deepEqual(domainCalls.at(-1), ['www.example.com', 'example.org']);
+
+  const bad = await get('/api/v1/domains?hosts=http%3A%2F%2Fevil');
+  assert.equal(bad.status, 400);
+  assert.equal((await bad.json()).error_code, ERROR_CODES.INVALID_REQUEST);
+
+  const forbidden = await get('/api/v1/domains?hosts=example.com', 'https://evil.example');
+  assert.equal(forbidden.status, 403);
+});
+
 test('unknown routes return 404 JSON', async () => {
   const res = await get('/nope');
   assert.equal(res.status, 404);
   assert.equal((await res.json()).error_code, ERROR_CODES.NOT_FOUND);
 });
 
-// Runs last: exhausts the per-IP limit (20/min configured above).
+// Runs last: exhausts the per-IP limit (40/min configured above).
 test('rate limits clients per IP', async () => {
   responses.set('roofer', { success: true });
   let limited;
-  for (let i = 0; i < 25 && !limited; i++) {
+  for (let i = 0; i < 50 && !limited; i++) {
     const res = await get('/api/v1/volume?keyword=roofer&country=US');
     if (res.status === 429) limited = res;
   }

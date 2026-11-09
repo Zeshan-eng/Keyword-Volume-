@@ -8,6 +8,10 @@ import { createGoogleAdsProvider } from './providers/dataforseo-ads.js';
 import { createDataForSeoClient } from './providers/dataforseo-client.js';
 import { createFallbackProvider } from './providers/fallback-provider.js';
 import { createLabsProvider } from './providers/dataforseo-labs.js';
+import { createRelatedKeywordsProvider } from './providers/dataforseo-related.js';
+import { createRdapProvider } from './providers/rdap.js';
+import { createDomainService } from './services/domain-service.js';
+import { createRelatedService } from './services/related-service.js';
 import { createVolumeService } from './services/volume-service.js';
 
 function buildServer(config, logger) {
@@ -28,7 +32,22 @@ function buildServer(config, logger) {
     refreshMinAgeMs: config.refreshMinAgeMs,
     logger,
   });
-  return createApp({ config, volumeService, logger });
+  const relatedService = createRelatedService({
+    provider: createRelatedKeywordsProvider({ client }),
+    cache: createTtlCache({ ttlMs: config.cacheTtlMs, maxEntries: config.cacheMaxEntries }),
+    refreshMinAgeMs: config.refreshMinAgeMs,
+    logger,
+  });
+  const domainService = createDomainService({
+    ageProvider: createRdapProvider({ timeoutMs: config.rdapTimeoutMs }),
+    cache: createTtlCache({
+      ttlMs: config.domainAgeCacheTtlMs,
+      maxEntries: config.cacheMaxEntries,
+    }),
+    ageTtlMs: config.domainAgeCacheTtlMs,
+    logger,
+  });
+  return createApp({ config, volumeService, relatedService, domainService, logger });
 }
 
 function main() {

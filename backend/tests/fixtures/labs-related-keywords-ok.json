@@ -1,0 +1,78 @@
+{
+  "version": "0.1.20260101",
+  "status_code": 20000,
+  "status_message": "Ok.",
+  "tasks_count": 1,
+  "tasks_error": 0,
+  "tasks": [
+    {
+      "id": "11091200-0000-0000-0000-000000000010",
+      "status_code": 20000,
+      "status_message": "Ok.",
+      "result_count": 1,
+      "path": ["v3", "dataforseo_labs", "google", "related_keywords", "live"],
+      "result": [
+        {
+          "se_type": "google",
+          "seed_keyword": "fixture seed",
+          "location_code": 2840,
+          "language_code": "en",
+          "total_count": 5,
+          "items_count": 5,
+          "items": [
+            {
+              "se_type": "google",
+              "keyword_data": {
+                "keyword": "fixture related one",
+                "keyword_info": {
+                  "last_updated_time": "2026-10-17 13:08:31 +00:00",
+                  "search_volume": 2400
+                }
+              },
+              "depth": 1,
+              "related_keywords": []
+            },
+            {
+              "se_type": "google",
+              "keyword_data": {
+                "keyword": "Fixture Seed",
+                "keyword_info": {
+                  "last_updated_time": "2026-10-17 13:08:31 +00:00",
+                  "search_volume": 999
+                }
+              },
+              "depth": 1
+            },
+            {
+              "se_type": "google",
+              "keyword_data": {
+                "keyword": "fixture related two",
+                "keyword_info": {
+                  "last_updated_time": "2026-10-17 13:08:31 +00:00",
+                  "search_volume": null
+                }
+              },
+              "depth": 2
+            },
+            {
+              "se_type": "google",
+              "keyword_data": {
+                "keyword": "fixture related one",
+                "keyword_info": { "search_volume": 2400 }
+              },
+              "depth": 2
+            },
+            {
+              "se_type": "google",
+              "keyword_data": {
+                "keyword": "fixture related three",
+                "keyword_info": { "search_volume": 170 }
+              },
+              "depth": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

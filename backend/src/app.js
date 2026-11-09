@@ -2,9 +2,10 @@
 import express from 'express';
 import { ERROR_CODES } from './lib/errors.js';
 import { clientRateLimit, originGuard, securityHeaders, sendError } from './middleware/security.js';
-import { createVolumeRouter } from './routes/volume.js';
+import { createDomainRouter } from './routes/domains.js';
+import { createKeywordRouter } from './routes/keywords.js';
 
-export function createApp({ config, volumeService, logger }) {
+export function createApp({ config, volumeService, relatedService, domainService, logger }) {
   const app = express();
   app.disable('x-powered-by');
   app.set('trust proxy', config.trustProxy);
@@ -21,7 +22,8 @@ export function createApp({ config, volumeService, logger }) {
       allowedOrigins: config.allowedOrigins,
       allowAnyExtensionOrigin: config.allowAnyExtensionOrigin,
     }),
-    createVolumeRouter({ volumeService, logger }),
+    createKeywordRouter({ volumeService, relatedService, logger }),
+    createDomainRouter({ domainService }),
   );
 
   app.use((_req, res) => sendError(res, 404, ERROR_CODES.NOT_FOUND));

@@ -1,5 +1,5 @@
 /**
- * Validates GET /api/v1/volume query parameters. The extension validates too,
+ * Validates API query parameters. The extension validates too,
  * but the backend never trusts client input.
  */
 import { ERROR_CODES } from '../lib/errors.js';
@@ -49,4 +49,35 @@ export function validateVolumeQuery(query) {
 
   // Only the exact value "1" requests a refresh; anything else is a normal lookup.
   return { ok: true, value: { keyword, country: rawCountry, refresh: rawRefresh === '1' } };
+}
+
+export const MAX_DOMAINS_PER_REQUEST = 20;
+// Letters (incl. internationalized), digits, dots and hyphens; 253 chars max per hostname.
+const HOSTNAME_PATTERN = /^[\p{L}\p{N}](?:[\p{L}\p{N}.-]{0,251}[\p{L}\p{N}])?$/u;
+
+/**
+ * GET /api/v1/domains?hosts=a.com,b.co.uk — up to 20 unique hostnames.
+ * @returns {{ ok: true, value: { hostnames: string[] } } | { ok: false, errorCode: string }}
+ */
+export function validateDomainsQuery(query) {
+  const raw = query?.hosts;
+  if (typeof raw !== 'string' || raw.length === 0 || raw.length > 5_000) {
+    return invalid(ERROR_CODES.INVALID_REQUEST);
+  }
+  const hostnames = [
+    ...new Set(
+      raw
+        .split(',')
+        .map((h) => h.trim().toLowerCase())
+        .filter(Boolean),
+    ),
+  ];
+  if (
+    hostnames.length === 0 ||
+    hostnames.length > MAX_DOMAINS_PER_REQUEST ||
+    !hostnames.every((h) => HOSTNAME_PATTERN.test(h) && !h.includes('..'))
+  ) {
+    return invalid(ERROR_CODES.INVALID_REQUEST);
+  }
+  return { ok: true, value: { hostnames } };
 }

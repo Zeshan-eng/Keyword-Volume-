@@ -1,0 +1,9 @@
+{
+  "objectClassName": "domain",
+  "ldhName": "FIXTURE-EXAMPLE.COM",
+  "events": [
+    { "eventAction": "registration", "eventDate": "2024-06-14T14:57:17Z" },
+    { "eventAction": "expiration", "eventDate": "2027-06-14T14:57:17Z" },
+    { "eventAction": "last changed", "eventDate": "2026-06-01T04:47:49Z" }
+  ]
+}

@@ -74,7 +74,7 @@ export function loadConfig(env = process.env) {
     rateLimitPerMinute: readInt(
       env,
       'RATE_LIMIT_PER_MINUTE',
-      30,
+      60,
       { min: 1, max: 10_000 },
       problems,
     ),
@@ -86,6 +86,15 @@ export function loadConfig(env = process.env) {
       { min: 1_000, max: 60_000 },
       problems,
     ),
+    rdapTimeoutMs: readInt(env, 'RDAP_TIMEOUT_MS', 8_000, { min: 1_000, max: 30_000 }, problems),
+    domainAgeCacheTtlMs:
+      readInt(
+        env,
+        'DOMAIN_AGE_CACHE_SECONDS',
+        2_592_000,
+        { min: 3_600, max: 31_536_000 },
+        problems,
+      ) * 1000,
     trustProxy: readInt(env, 'TRUST_PROXY_HOPS', 0, { min: 0, max: 10 }, problems),
     logLevel,
   };
