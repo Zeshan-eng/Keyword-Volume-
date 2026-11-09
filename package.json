@@ -1,6 +1,6 @@
 {
   "name": "keyword-volume-finder",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "description": "Chrome extension that shows provider-sourced keyword search volume on Google SERPs.",
   "type": "module",

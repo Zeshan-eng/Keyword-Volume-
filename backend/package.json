@@ -1,6 +1,6 @@
 {
   "name": "keyword-volume-finder-backend",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "description": "Backend proxy for Keyword Volume Finder: validates requests, calls DataForSEO, caches and normalizes results.",
   "type": "module",

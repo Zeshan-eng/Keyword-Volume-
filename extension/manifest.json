@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Keyword Volume Finder",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "See estimated monthly search volume for your Google searches, right on the results page.",
   "minimum_chrome_version": "116",
   "icons": {
