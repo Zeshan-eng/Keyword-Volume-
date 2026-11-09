@@ -6,6 +6,26 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added (PRD v2)
+
+- Related keywords: up to 20 suggestions with estimated volumes in an expandable card section,
+  with copy and search-on-Google actions; count shown in the popup.
+- Domain age: inline `Age: Ny` badge beside each organic result and a slim toolbar (registration
+  date, ICANN whois link, source) from public RDAP records.
+- Backend endpoints `/api/v1/related` and `/api/v1/domains`; setting to hide domain age;
+  beginner tooltips for every metric; `AGENTS.md` with project rules.
+
+### Changed
+
+- Shared cached-loader (backend) and prefixed storage caches (extension).
+- Default per-IP rate limit raised to 60/min (each search makes about 3 API calls).
+
+### Not implemented
+
+- Domain Rating (DR): requires a paid Ahrefs API plan; deferred by decision on 9 November 2026.
+
+### Earlier
+
 ### Added
 
 - Manifest V3 extension: automatic Google query detection; a Shadow-DOM search-volume card with

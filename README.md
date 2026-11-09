@@ -1,12 +1,19 @@
 # Keyword Volume Finder
 
-A Manifest V3 Chrome extension that shows the **estimated monthly search volume** of your Google
-search directly on the results page. Volumes come from [DataForSEO](https://dataforseo.com)
-through a small Node.js backend that keeps the API credentials off the client.
+A Manifest V3 Chrome extension for keyword research directly on Google results pages:
+
+- **Search volume** — estimated monthly searches for your query.
+- **Related keywords** — up to 20 suggestions with their volumes, copy and search actions.
+- **Domain age** — an `Age: 8y` badge and a slim info bar beside each organic result.
+
+Keyword data comes from [DataForSEO](https://dataforseo.com); domain registration dates come from
+public RDAP registry records. Both go through a small Node.js backend that keeps API credentials
+off the client. **Domain Rating (DR)** is planned but not implemented: it requires a paid Ahrefs
+API plan (see [docs/api-integration.md](docs/api-integration.md#domain-rating-dr--not-implemented)).
 
 > Search volumes are provider estimates (Google Ads data), not exact counts of Google searches.
-> When the provider has no data, the extension says **"Data unavailable"**. It never shows an
-> invented number.
+> Domain age is the time since the domain was first registered, not necessarily the age of the
+> website. Missing data is shown as **"Data unavailable"** or **"N/A"**, never as an invented value.
 
 ## Repository layout
 
@@ -57,13 +64,14 @@ The extension talks to the backend URL in [extension/shared/config.js](extension
 
 ## How it works
 
-1. The content script reads `q` from the Google results URL and validates it.
-2. The service worker checks a 24-hour local cache keyed by keyword and country.
-3. On a cache miss it calls `GET /api/v1/volume` on the backend.
-4. The backend checks its own cache, then asks **DataForSEO Labs** (cheap and fast). If Labs has
-   no data, it falls back to **DataForSEO Google Ads Live**. Worldwide lookups go straight to
-   Google Ads, because Labs requires a location.
-5. The result is shown in a Shadow-DOM card above the results and in the toolbar popup.
+1. The content script reads `q` from the Google results URL and finds the organic results.
+2. The service worker checks local caches (keyword data 24 hours, registration dates 30 days).
+3. On a miss it calls the backend: `/api/v1/volume`, `/api/v1/related` and `/api/v1/domains`.
+   The three load and fail independently.
+4. Search volume: **DataForSEO Labs** first, **Google Ads Live** as fallback (and for worldwide).
+   Related keywords: DataForSEO Labs `related_keywords` (needs a specific country).
+   Domain age: the registry's **RDAP** server, found through the IANA bootstrap list.
+5. Results appear in the card above the results, as badges beside each result, and in the popup.
 
 See [docs/architecture.md](docs/architecture.md) for details.
 
@@ -75,10 +83,12 @@ Settings page.
 
 ## Status
 
-- Extension and backend are implemented and covered by automated tests.
-- The extension was checked end to end in Chromium against a test-only stub backend on a page
-  shaped like Google's results. Live Google blocks automated browsers, so the card's placement
-  on the real Google page still needs a manual check.
-- **Live DataForSEO lookups verified** (8 November 2026) for all 8 countries, including the "no
-  data" case and caching. Details and remaining open items are in
+- Extension and backend are implemented and covered by automated tests (117).
+- **Live services verified** (9 November 2026): search volume for all 8 countries, related
+  keywords, and RDAP domain age (for example .com, .co.uk and .ca dates returned; .ae, .pk and
+  .io registries publish no RDAP data and show N/A).
+- The extension was checked end to end in Chromium against the live backend on a page shaped like
+  Google's result markup, in light and dark themes. Live google.com blocks automated browsers, so
+  placement on the real Google page needs a manual check.
+- Open items are listed in
   [docs/api-integration.md](docs/api-integration.md#live-verification-checklist).

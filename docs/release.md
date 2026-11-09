@@ -21,12 +21,14 @@
 
 ## Privacy and permission disclosures
 
-- **Single purpose:** show estimated search volume for the current Google search.
+- **Single purpose:** show keyword research data (search volume, related keywords, domain age)
+  for the current Google search.
 - **`storage`:** saves the chosen country, the card preference and a 24-hour result cache on the
   device.
 - **Host access to Google Search pages:** reads the search query from the URL and shows the card.
 - **Data handling:** the search keyword and chosen country are sent to the extension's backend
-  and, from there, to DataForSEO to look up volume. No personal information, browsing history or
+  and, from there, to DataForSEO. The hostnames of the organic results on the page are sent to
+  the backend and, from there, to the domains' public RDAP registry servers. No personal information, browsing history or
   account data is collected. A privacy policy URL is required, because user-entered search terms
   leave the device.
 - **Remote code:** none. All code is packaged.

@@ -1,4 +1,4 @@
-# DataForSEO integration
+# Data provider integration
 
 Verified against the official documentation on **8 November 2026**. Re-check prices and limits
 before launch, because they change.
@@ -68,6 +68,49 @@ From [the errors appendix](https://docs.dataforseo.com/v3/appendix/errors/), imp
 4. Any error (auth, billing, rate limit, timeout) stops the chain. Retrying on the same account
    would not help.
 
+## Related keywords
+
+- Endpoint: `POST /v3/dataforseo_labs/google/related_keywords/live`
+  ([docs](https://docs.dataforseo.com/v3/dataforseo_labs/google/related_keywords/live/)).
+- Request: `keyword`, `location_code`, `language_code`, `depth: 2` (up to ~72 candidates),
+  `limit: 30`, `order_by: ["keyword_data.keyword_info.search_volume,desc"]`.
+- We keep the first 20 after removing the seed keyword and duplicates. Missing volumes stay
+  `null` and show as "Data unavailable".
+- Requires a location, so Global / Worldwide returns `not_supported`.
+- Cost: charged per request plus per returned item; roughly $0.01 per uncached search.
+- Cache: 24 hours per keyword + country + provider (backend and extension).
+
+## Domain age (RDAP)
+
+- Source: RDAP, the ICANN-mandated structured successor to WHOIS. Free, no API key.
+- Server discovery: the IANA bootstrap file `https://data.iana.org/rdap/dns.json` (cached
+  24 hours). Only HTTPS servers listed there are contacted.
+- Lookup: `GET <server>/domain/<registered-domain>`; the creation date is the `events[]` entry
+  with `eventAction: "registration"`.
+- The hostname is first reduced to its registered domain with the Public Suffix List (`tldts`),
+  e.g. `news.bbc.co.uk` → `bbc.co.uk`; internationalized names are converted to punycode.
+- Coverage (checked 9 November 2026): .com, .net, .org, .info, .uk, .ca, .in have RDAP servers;
+  .co, .ae, .pk, .io and .de have none listed → "Age: N/A". Some registries with RDAP (for example
+  for abc.net.au) return no registration date → also N/A.
+- Limits: domain age is registration age, not website or business age; a domain can expire and be
+  re-registered. Registries may rate limit (HTTP 429 → temporary error, not cached).
+- Cache: confirmed dates 30 days (`DOMAIN_AGE_CACHE_SECONDS`), unavailable answers 1 day.
+
+## Domain Rating (DR) — not implemented
+
+The PRD requires real Ahrefs DR and forbids substitutes (DA, DataForSEO rank, etc.). Findings on
+9 November 2026:
+
+- Endpoint: `GET https://api.ahrefs.com/v3/site-explorer/domain-rating?target=<domain>&date=<YYYY-MM-DD>`
+  with `Authorization: Bearer <key>`.
+- Per Ahrefs' help centre, API v3 access needs at least the **Lite** plan (200,000 API units per
+  month, minimum 50 units per request → at most ~4,000 lookups per month). Third-party sources
+  disagree on the plan required, and Ahrefs' terms on showing API data to other users of a tool
+  should be checked before release.
+- Decision (user, 9 November 2026): **skip DR for now.** To add it later, implement a
+  `DomainRatingProvider` adapter next to `providers/rdap.js`, add a `domain_rating` block to the
+  `/api/v1/domains` response (7-day cache) and a `DR` badge.
+
 ## Configuration
 
 All settings are in [backend/.env.example](../backend/.env.example). The required ones are
@@ -80,7 +123,7 @@ volumes.
 
 ## Live verification checklist
 
-Run on 8 November 2026 against the live API (backend started with real credentials):
+Search volume, run on 8 November 2026 against the live API (backend started with real credentials):
 
 - [x] `curl` one keyword ("plumber") per country with an extension `Origin` header. All 8 returned
       `success: true` with plausible volumes (US 673,000; GB 60,500; AE 5,400; PK 12,100; CA 60,500;
@@ -96,3 +139,17 @@ Run on 8 November 2026 against the live API (backend started with real credentia
 - [ ] Load the extension in Chrome on real google.com and google.co.uk, and confirm the card's
       placement and dark-theme rendering. Automated browsers are blocked by Google's CAPTCHA, so
       this needs a manual check.
+
+Related keywords and domain age, run on 9 November 2026 against the live services:
+
+- [x] "mold removal" (US) returned 20 related keywords sorted by volume (for example "mold removal
+      service" 90,500; "mold removal near me" 18,100); the seed was excluded; repeat was cached.
+- [x] "plumber" (PK) returned 20 related keywords; GLOBAL returned `not_supported`.
+- [x] RDAP: moldsolutionsgnv.com 2024-06-14 (2y 4m), bbc.co.uk 1994-12-13, example.com 1995-08-14,
+      cbc.ca 2000-10-16; emirates.ae, daraz.pk, github.io unavailable (no RDAP server);
+      abc.net.au unavailable (no registration date); `news.bbc.co.uk` normalized to `bbc.co.uk`.
+- [x] Extension end to end (Chromium, live backend, Google-shaped page): badges on organic results
+      only, ads / People-also-ask / Google Maps skipped, badge clicks do not navigate, setting
+      toggles badges, light and dark themes.
+- [ ] Confirm badge and toolbar placement on real google.com (Google's markup class names such as
+      `.VuuXrf` and `.yuRUbf` can change; without them the badge falls back into the toolbar).

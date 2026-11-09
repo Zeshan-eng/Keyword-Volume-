@@ -27,6 +27,14 @@
   (PRD §10).
 - Behind a reverse proxy, set `TRUST_PROXY_HOPS` so per-IP limits use the real client IP.
 
+## Outbound requests (SSRF)
+
+- Domain age lookups only contact RDAP servers listed in the IANA bootstrap file, over HTTPS. The
+  hostname supplied by the client is validated, reduced to a registered domain via the Public
+  Suffix List and URL-encoded into the path; it never chooses the server.
+- IP addresses, `localhost`, bare public suffixes and malformed names are rejected before any
+  lookup. At most 20 hostnames per request, 4 lookups in parallel, 8-second timeout each.
+
 ## Transport
 
 - Production must run behind HTTPS. HSTS is sent when `NODE_ENV=production`. The DataForSEO base
@@ -56,7 +64,7 @@
   cannot read other tabs' state.
 - The default MV3 extension-page CSP applies (`script-src 'self'`). There are no remote scripts,
   and fonts are bundled.
-- `web_accessible_resources` exposes only module code, card CSS, fonts and one icon, and only to
+- `web_accessible_resources` exposes only module code, content CSS, fonts and one icon, and only to
   Google origins. This lets Google pages detect that the extension is installed. That is
   accepted for MVP.
 
@@ -68,6 +76,6 @@ HSTS in production, and no `X-Powered-By`.
 
 ## Dependencies
 
-Runtime dependencies are `express` and `express-rate-limit`. All versions are pinned and the
+Runtime dependencies are `express`, `express-rate-limit` and `tldts` (Public Suffix List). All versions are pinned and the
 lockfile is committed. `npm audit` reports 0 vulnerabilities. Through `overrides`, ESLint's
 transitive `minimatch` is pinned to a patched release (GHSA-g3hv-75wg-m249).
