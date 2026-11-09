@@ -1,7 +1,8 @@
 /**
- * Orchestrates a volume lookup: cache → in-flight de-duplication → provider,
- * and shapes the public response contract.
+ * Search volume lookups: cached loader → provider chain, shaped into the public
+ * response contract.
  */
+import { createCachedLoader } from '../cache/cached-loader.js';
 import { ERROR_CODES, PUBLIC_MESSAGES } from '../lib/errors.js';
 import { getLocation } from '../countries.js';
 
@@ -31,42 +32,31 @@ function toResponseBody({ keyword, country, result, source }) {
 }
 
 export function createVolumeService({ provider, cache, refreshMinAgeMs, now = Date.now, logger }) {
-  const inFlight = new Map();
+  const loader = createCachedLoader({ cache, refreshMinAgeMs, now });
 
-  async function fetchAndCache(cacheKey, keyword, country) {
-    const startedAt = now();
-    const { result, source } = await provider.lookup({ keyword, location: getLocation(country) });
-    const body = toResponseBody({ keyword, country, result, source });
-    // Both data and confirmed "no data" are cached; errors never are.
-    cache.set(cacheKey, body);
-    logger.info('volume_lookup', {
-      country,
-      source,
-      found: body.success,
-      duration_ms: now() - startedAt,
-    });
-    return body;
-  }
-
-  /**
-   * @returns {Promise<object>} Response body. Throws ProviderError on failure.
-   */
+  /** @returns {Promise<object>} Response body. Throws ProviderError on failure. */
   async function getVolume({ keyword, country, refresh }) {
-    const cacheKey = buildCacheKey(keyword, country);
-    const cached = cache.get(cacheKey);
-    // A forced refresh only bypasses entries older than refreshMinAgeMs, which keeps
-    // a "refresh" button from becoming a way to run up provider costs.
-    if (cached && (!refresh || now() - cached.storedAt < refreshMinAgeMs)) {
-      return { ...cached.value, keyword, cached: true };
-    }
-
-    let pending = inFlight.get(cacheKey);
-    if (!pending) {
-      pending = fetchAndCache(cacheKey, keyword, country).finally(() => inFlight.delete(cacheKey));
-      inFlight.set(cacheKey, pending);
-    }
-    const body = await pending;
-    return { ...body, keyword, cached: false };
+    const { value, cached } = await loader.load(
+      buildCacheKey(keyword, country),
+      async () => {
+        const startedAt = now();
+        const { result, source } = await provider.lookup({
+          keyword,
+          location: getLocation(country),
+        });
+        const body = toResponseBody({ keyword, country, result, source });
+        logger.info('volume_lookup', {
+          country,
+          source,
+          found: body.success,
+          duration_ms: now() - startedAt,
+        });
+        // Both data and confirmed "no data" are cached; errors never are.
+        return { value: body, cacheable: true };
+      },
+      { refresh },
+    );
+    return { ...value, keyword, cached };
   }
 
   return { getVolume };

@@ -8,7 +8,7 @@ export function createTtlCache({ ttlMs, maxEntries, now = Date.now }) {
   function get(key) {
     const entry = entries.get(key);
     if (!entry) return undefined;
-    if (now() - entry.storedAt >= ttlMs) {
+    if (now() >= entry.expiresAt) {
       entries.delete(key);
       return undefined;
     }
@@ -18,9 +18,11 @@ export function createTtlCache({ ttlMs, maxEntries, now = Date.now }) {
     return entry;
   }
 
-  function set(key, value) {
+  /** Stores a value; `entryTtlMs` overrides the default TTL for this entry. */
+  function set(key, value, entryTtlMs = ttlMs) {
+    const storedAt = now();
     entries.delete(key);
-    entries.set(key, { value, storedAt: now() });
+    entries.set(key, { value, storedAt, expiresAt: storedAt + entryTtlMs });
     while (entries.size > maxEntries) {
       entries.delete(entries.keys().next().value);
     }
